@@ -3,20 +3,13 @@ const express = require('express');
 const router = express.Router();
 
 
-//Cadastra cliente
 router.post('/',(req, res)=>{
-    let usuario = {};
     const { nome, email, senha, telefone } = req.body;
-    // usuario = { nome, email, senha, telefone };
-    usuario.nome = nome;
-    usuario.email = email;
-    usuario.senha = senha;
-    usuario.telefone = telefone;
+    const usuario = { nome, email, senha, telefone };
 
+    let filter = `INSERT INTO USUARIO ( nome, email, senha, telefone ) VALUES ( "${(usuario.nome)}" , "${(usuario.email)}", "${(usuario.senha)}", "${(usuario.telefone)}")`;
 
-    const strUser = 'INSERT INTO USUARIO ( nome, email, senha, telefone ) VALUES ( "'+ usuario.nome +' " , " '+ usuario.email +' ", " '+ usuario.senha + '", "' + usuario.telefone + '")';
-
-    app.query(strUser, (err, rows, fields) => {
+    app.query(filter, (err, rows, fields) => {
         if (!err)
             res.send(rows);
         else
@@ -24,7 +17,20 @@ router.post('/',(req, res)=>{
     })
 })
 
-//Busca todos os Usuarios
+router.get('/',(req, res)=>{
+    const {email,senha} = req.body;
+    const usuario = {email,senha};
+
+    let filter = `SELECT const(*) FROM USUARIO WHERE email = "${(usuario.email)}" AND senha = "${(usuario.senha)}"`;
+    app.query(filter, (err, rows, fields) => {
+        if (!err)
+            res.send(rows);
+        else
+            console.log(err);
+    })
+    console.log("É tóis!\n");
+})
+
 router.get('/',(req, res)=>{
     app.query('SELECT * FROM USUARIO', (err, rows, fields) => {
         if (!err)
@@ -35,24 +41,19 @@ router.get('/',(req, res)=>{
     console.log("É tóis!\n");
 })
 
-//Busca usuario por id
-router.get('/:idUser?', (req, res) => {
-    let filter = '';
-    if(req.params.idUser) filter = ' WHERE idUser =' + parseInt(req.params.idUser);
-    console.log(req.params.idUser);
-    app.query('SELECT * FROM USUARIO' + filter, (err, rows, fields) => {
+router.get('/:idUser', (req, res) => {
+
+    let filter = `SELECT * FROM USUARIO WHERE idUser = "${(parseInt(req.params.idUser))}"`;
+    app.query(filter, (err, rows, fields) => {
         if (!err){
-            // console.log(rows);
             res.send(rows);
         }else
             console.log(err);
     })
 })
 
-//Busca usuario por nome
-router.get('/nome/:nome',(req, res)=>{
-    let filter = '';
-    if (req.params.nome) filter = 'SELECT * FROM USUARIO WHERE nome ="' + req.params.nome+'"';
+router.get('/nome',(req, res)=>{
+    let filter = `SELECT * FROM USUARIO WHERE nome = "${(req.body.nome)}"`;
     app.query(filter, (err, rows, fields) => {
         if (!err)
             res.send(rows);
@@ -61,20 +62,11 @@ router.get('/nome/:nome',(req, res)=>{
     })
 })
 
-//Atualiza dados do Usuario
 router.put('/',(req, res)=>{
-    let usuario = {};
     const { idUser, nome, email, senha, telefone} = req.body;
-    usuario.idUser = idUser;
-    usuario.nome = nome;
-    usuario.email = email;
-    usuario.senha = senha;
-    usuario.telefone = telefone;
+    const UserAlt= { idUser, nome, email, senha, telefone};
 
-    let filter = '';
-    console.log(req.body);
-    if (req.body) filter = 'UPDATE USUARIO SET nome="' + usuario.nome + '" , email="'+ usuario.email + '" , senha="'+ usuario.senha + '", telefone="'+ usuario.telefone + '" WHERE idUser=  '+  parseInt(usuario.idUser)+'';
-    console.log(filter);
+    let filter = `UPDATE USUARIO SET nome = "${(UserAlt.nome)}", email = "${(UserAlt.email)}", senha = "${(UserAlt.senha)}", telefone = "${(UserAlt.telefone )}" WHERE idUser =  "${(parseInt(UserAlt.idUser))}"`;
     app.query(filter, (err, rows, fields) => {
         if (!err)
             res.send(rows);
@@ -84,11 +76,9 @@ router.put('/',(req, res)=>{
 })
 
 
-//Deleta usuario por id
-router.delete('/:idUser?', (req, res)=>{
-    let filter = '';
-    console.log(req.params.idUser);
-    if (req.params.idUser) filter = 'DELETE FROM USUARIO WHERE idUser ='+ parseInt(req.params.idUser);
+router.delete('/idUser', (req, res)=>{
+    let filter = `DELETE FROM USUARIO WHERE idUser ="${(parseInt(req.body.idUser))}"`;
+
     app.query(filter, (err, rows, fields) => {
         if (!err)
             res.send(rows);

@@ -1,7 +1,6 @@
 drop table if exists EMPRESTIMO;
 drop table if exists USUARIO;
 drop table if exists LIVRO;
-drop table if exists ATENDENTE;
 
 CREATE TABLE USUARIO(
 	idUser integer NOT NULL AUTO_INCREMENT,
@@ -13,8 +12,9 @@ CREATE TABLE USUARIO(
 );
 
 CREATE TABLE LIVRO(
-	ISSN varchar(30),
-    PRIMARY KEY(ISSN),
+    idLivro integer NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(idLivro),
+	ISBN varchar(30),
     titulo varchar(30),
     Autor varchar(30),
     Editora varchar(30),
@@ -22,12 +22,11 @@ CREATE TABLE LIVRO(
 );
 
 CREATE TABLE EMPRESTIMO(
-	ISSN varchar(30),
+	idLivro integer,
     idUser integer,
-    statusEmp varchar(10),
     DataEmp date, 
     DataDev date,
-	PRIMARY KEY(ISSN,idUser),
-    FOREIGN KEY(ISSN) REFERENCES LIVRO(ISSN),
+	PRIMARY KEY(idLivro,idUser),
+    FOREIGN KEY(idLivro) REFERENCES LIVRO(idLivro),
     FOREIGN KEY(idUser) REFERENCES USUARIO(idUser)
 );
